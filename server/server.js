@@ -3,58 +3,47 @@ require('../config/config');
 
 
 const express = require('express');
+const mongoose = require('mongoose');
+
 const app = express();
+
+
 //body-parcer: es un paquete que sirve para analizar las solicitudes req.body pasadas como parametros en el body
 const bodyParser = require('body-parser');
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/', (req, res) => {
-    res.json("Hello World");
-});
 
-app.post('/usuario', (req, res) => {
-
-    let { nombre, apellido } = req.body;
+//Importamos los verbos que creamos en la ruta usuario
+app.use(require('./routes/usuario'));
 
 
-    if (nombre === undefined) {
+//Coneccion a mongodb
 
-        res.status(400).send({
-            ok: false,
-            mensaje: 'Tiene que asignar un nombre',
-        })
-    } else {
-        res.send({
-            nombre,
-            apellido,
-            status: res.code
-        });
-    }
+let opciones = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+};
 
 
-});
+//Coneccion para servidor MongoAtlas
+mongoose.connect(process.env.URLDB, opciones, err => {
 
-app.get('/usuario', (req, res) => {
-    res.json("get User");
+    if (err) throw err;
+    console.log('Conectado a la Base de datos');
 });
 
 
-//PUT para actualizar datos
-app.put('/usuario/:id', (req, res) => {
+//Coneccion para servidor local
+/* mongoose.connect('mongodb://localhost:27017/cafe', opciones, err => {
 
-    let idUser = req.params.id; //valor que recibimos del :id pasados por parametro
+    if (err) throw err;
+    console.log('Conectado a la Base de datos');
+}); */
 
-    res.json({
-        idUser
-    });
-});
 
-app.delete('/usuario', (req, res) => {
-    res.json("delete User");
-});
 
 app.listen(process.env.PORT, () => {
     console.log('Aplicacion corriendo en puerto', process.env.PORT);
