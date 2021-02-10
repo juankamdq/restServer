@@ -24,7 +24,7 @@ app.get('/infoServer', (req, res) => {
 
         res.json({
             entorno: process.env.NODE_ENV,
-            urlDb: process.env.urlDb
+            urlDb: process.env.URLDB
         })
     }
 
