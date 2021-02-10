@@ -21,11 +21,22 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 //              Base de datos
 // ==================================
 
+/*
+En heroku podemos crear variables de entorno. esto es por si queres ocultar datos importantes. 
+Ejemplo: cadena de coneccion del clouster mongo
 
-let urlDb = 'mongodb+srv://juanka:DFbgrejplYCZzNTx@cluster0.ci5fv.mongodb.net/cafe';
+command-line
+heroku config --> Retorna todas las variables de entorno
+heroku config:set nombreVariable=valor --> Creo una variable
+heroku config:get nombreVariable --> Retorno variable
 
-/* if (process.env.NODE_ENV === 'dev')
-    urlDb = 'mongodb://localhost:27017/cafe'; */
+*/
+
+// MONGO_URL la creamos en consola con la cadena de coneccion
+let urlDb = process.env.MONGO_URL;
+
+if (process.env.NODE_ENV === 'dev')
+    urlDb = 'mongodb://localhost:27017/cafe';
 
 //Inventantamos una variable al env para asignarla a la cadena de coneccion del server, tambien se podria exportar como module    
 process.env.URLDB = urlDb;

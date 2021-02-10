@@ -18,19 +18,21 @@ const Usuario = require('../models/usuario');
 const { isNumber } = require('underscore');
 
 
+//Aca recibo info del enterno de desarrollo
 app.get('/infoServer', (req, res) => {
 
-    if (process.env.NODE_ENV !== 'dev') {
+    let datos = {
+        entorno: process.env.NODE_ENV,
+        urlDb: process.env.URLDB
+    };
 
-        res.json({
-            entorno: process.env.NODE_ENV,
-            urlDb: process.env.URLDB
-        })
+    if (process.env.NODE_ENV === 'dev') {
+        return res.json(datos);
     }
 
-    /*  res.send('Nose'); */
-
+    resp.json(datos);
 });
+
 
 app.post('/usuario', (req, res) => {
 
