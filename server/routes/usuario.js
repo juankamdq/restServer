@@ -30,7 +30,7 @@ app.get('/infoServer', (req, res) => {
         return res.json(datos);
     }
 
-    resp.json(datos);
+    res.json(datos);
 });
 
 
