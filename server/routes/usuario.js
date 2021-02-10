@@ -20,7 +20,7 @@ const { isNumber } = require('underscore');
 
 app.get('/infoServer', (req, res) => {
 
-    if (process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV !== 'dev') {
 
         res.json({
             entorno: process.env.NODE_ENV,
@@ -28,7 +28,7 @@ app.get('/infoServer', (req, res) => {
         })
     }
 
-    res.send('Nose');
+    /*  res.send('Nose'); */
 
 });
 
