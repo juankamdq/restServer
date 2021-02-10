@@ -18,8 +18,18 @@ const Usuario = require('../models/usuario');
 const { isNumber } = require('underscore');
 
 
-app.get('/', (req, res) => {
-    res.json("Hello World");
+app.get('/infoServer', (req, res) => {
+
+    if (process.env.NODE_ENV === 'dev') {
+
+        res.json({
+            entorno: process.env.NODE_ENV,
+            urlDb: process.env.urlDb
+        })
+    }
+
+    res.send('Nose');
+
 });
 
 app.post('/usuario', (req, res) => {
