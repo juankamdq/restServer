@@ -3,7 +3,7 @@ require('../config/config');
 
 
 const express = require('express');
-const mongoose = require('mongoose');
+
 
 const app = express();
 
@@ -15,36 +15,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-//Importamos los verbos que creamos en la ruta usuario
-app.use(require('./routes/usuario'));
+//Importamos las rutas globales
 
-
-//Coneccion a mongodb
-
-let opciones = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true
-};
-
-
-//Coneccion para servidor MongoAtlas
-mongoose.connect(process.env.URLDB, opciones, err => {
-
-    if (err) throw err;
-    console.log('Conectado a la Base de datos');
-});
-
-
-//Coneccion para servidor local
-/* mongoose.connect('mongodb://localhost:27017/cafe', opciones, err => {
-
-    if (err) throw err;
-    console.log('Conectado a la Base de datos');
-}); */
+app.use(require('./routes/index'));
 
 
 
+//Coneccion al mongoose
+require('./mongoose');
+
+
+//Ingreso el puerto a utilizar
 app.listen(process.env.PORT, () => {
     console.log('Aplicacion corriendo en puerto', process.env.PORT);
 

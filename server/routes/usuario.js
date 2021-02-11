@@ -15,26 +15,14 @@ const _ = require('underscore');
 //Importamos el modelo para cargarle los datos. Dejamos la variable en mayuscula porque crearemos objetos
 //con la palabra reservada new Usuario(doc)
 const Usuario = require('../models/usuario');
-const { isNumber } = require('underscore');
 
 
-//Aca recibo info del enterno de desarrollo
-app.get('/infoServer', (req, res) => {
-
-    let datos = {
-        entorno: process.env.NODE_ENV,
-        urlDb: process.env.URLDB
-    };
-
-    if (process.env.NODE_ENV === 'dev') {
-        return res.json(datos);
-    }
-
-    res.json(datos);
-});
+//LLamo a los middleweare que cree
+const { verificarToken, verificarRol } = require('../middleweare/autorizacion');
 
 
-app.post('/usuario', (req, res) => {
+
+app.post('/usuario', [verificarToken, verificarRol], (req, res) => {
 
     let body = req.body;
 
@@ -78,7 +66,7 @@ app.post('/usuario', (req, res) => {
 });
 
 //PUT para actualizar datos
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', verificarToken, (req, res) => {
 
     /*
         El problema que tenemos que evitar es que el usuario no pueda ingresar datos adicionales a la hora de actualizar,
@@ -124,7 +112,9 @@ app.put('/usuario/:id', (req, res) => {
 
 });
 
-app.get('/usuario', (req, res) => {
+
+// El middlewere verificarToken no lo estamos ejecutando con (), se dispararà solo cuando el usuario haga peticiones
+app.get('/usuario', verificarToken, (req, res) => {
 
 
     let limite = req.query.limite || 0; //Por parametros obtengo el limite Ej. ?limite=5
@@ -134,8 +124,8 @@ app.get('/usuario', (req, res) => {
     desde = Number(desde);
 
     //find({traer},  que mostrar)
-    Usuario.find({ role: true }, 'nombre email')
-        .skip(0) //trae a partir de x posiciones
+    Usuario.find({ estado: true }, 'nombre email')
+        .skip(desde) //trae a partir de x posiciones
         .limit(limite) //Trae x cantidad de documentos. Permite no consumir tantos datos al usuario
         .exec((err, userDb) => {
 
@@ -146,18 +136,16 @@ app.get('/usuario', (req, res) => {
                 });
             };
 
+
+
             Usuario.countDocuments({ estado: true }, (err, contador) => {
 
-                res.send({
+                res.json({
                     ok: true,
-                    mensaje: userDb,
+                    userDb,
                     contador
                 })
-
-
             })
-
-
 
         });
 
@@ -166,7 +154,7 @@ app.get('/usuario', (req, res) => {
 
 
 //Directamente borramos el documento. No es buena practica, ya que los datos tienen que ser persistentes
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', verificarToken, (req, res) => {
 
     let id = req.params.id;
 
@@ -199,7 +187,7 @@ app.delete('/usuario/:id', (req, res) => {
 });
 
 
-app.delete('/usuarios/:id', (req, res) => {
+app.delete('/usuarios/:id', verificarToken, (req, res) => {
 
     let idUser = req.params.id;
 
@@ -223,5 +211,23 @@ app.delete('/usuarios/:id', (req, res) => {
 
 
 })
+
+
+//Aca recibo info del enterno de desarrollo
+app.get('/infoServer', verificarToken, (req, res) => {
+
+    let datos = {
+        entorno: process.env.NODE_ENV,
+        urlDb: process.env.MONGO_URL //MONGO_URL lo creamos como variable de entorno heroku
+    };
+
+    if (process.env.NODE_ENV === 'dev') {
+        return res.json(datos);
+    }
+
+    res.json(datos);
+});
+
+
 
 module.exports = app;

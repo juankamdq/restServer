@@ -40,3 +40,19 @@ if (process.env.NODE_ENV === 'dev')
 
 //Inventantamos una variable al env para asignarla a la cadena de coneccion del server, tambien se podria exportar como module    
 process.env.URLDB = urlDb;
+
+
+
+// ==================================
+//         Vencimiento Token
+// ==================================
+
+
+process.env.CADUCIDAD_TOKEN = 60 * 60 * 24 * 30;
+
+
+// ==================================
+//              Seed
+// ==================================
+
+process.env.TOKEN_SEED = process.env.TOKEN_SEED || 'esto-es-un-seed-desarrollo';
